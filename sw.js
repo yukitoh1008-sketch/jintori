@@ -1,5 +1,5 @@
 // 陣取りバトル のサービスワーカー（tools/build_public.js が作る。手で直さない）
-const CACHE = 'jintori-1.31.0';
+const CACHE = 'jintori-1.32.0';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
