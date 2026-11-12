@@ -1,5 +1,5 @@
 // 陣取りバトル のサービスワーカー（tools/build_public.js が作る。手で直さない）
-const CACHE = 'jintori-1.38.0';
+const CACHE = 'jintori-1.39.0';
 const BADGE = 'jintori-badge';
 const API = "https://script.google.com/macros/s/AKfycbyXvlq40FU3TM_hHAvNxk2a2aXqx5LiyaBcQKug2r60hz0s_4IVLLWUdivBfKrpXAxQ/exec";
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
