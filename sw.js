@@ -1,13 +1,14 @@
 // 陣取りバトル のサービスワーカー（tools/build_public.js が作る。手で直さない）
-const CACHE = 'jintori-1.42.0';
+const CACHE = 'jintori-1.43.0';
 const BADGE = 'jintori-badge';
+const SOUND_CACHE = 'jintori-sounds'; // 音のファイル。版が変わっても消さない（毎回ダウンロードしないように）
 const API = "https://script.google.com/macros/s/AKfycbyXvlq40FU3TM_hHAvNxk2a2aXqx5LiyaBcQKug2r60hz0s_4IVLLWUdivBfKrpXAxQ/exec";
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', (e) => {
-  e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE && k !== BADGE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE && k !== BADGE && k !== SOUND_CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });
 
 async function badgeGet() {
@@ -64,6 +65,14 @@ self.addEventListener('fetch', (e) => {
       caches.open(CACHE).then((c) => c.put('./index.html', copy));
       return res;
     }).catch(() => caches.match('./index.html')));
+    return;
+  }
+  // 音のファイル：一度ダウンロードしたらスマホに保存して使い回す（BGM は 1曲 数MB あるので）
+  if (//sounds/[^/]+.mp3$/.test(new URL(req.url).pathname)) {
+    e.respondWith(caches.open(SOUND_CACHE).then((c) => c.match(req).then((hit) => hit || fetch(req).then((res) => {
+      if (res.ok) c.put(req, res.clone());
+      return res;
+    }))));
     return;
   }
   e.respondWith(caches.match(req).then((hit) => hit || fetch(req)));
